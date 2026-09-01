@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第三課・條件判斷（if / else）</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+  <p class="eyebrow">Lesson 0003 · Python for ecgtizer-neurokit2</p>
+  <h1>條件判斷（if / else）：讓程式碼看情況做不同的事</h1>
+  <p class="subtitle">Lesson 1 跳過的那個三元運算式，這一課補回來講清楚。順便看懂幾乎每支 script 最後都有的 <code>if __name__ == "__main__":</code> 是在幹嘛。</p>
+
+  <div class="callout">
+    <span class="label">跟你的目標有什麼關係</span>
+    程式碼不是永遠從第一行照順序跑到最後一行——很多時候它會「看情況」走不同的路。看懂 if/else，你才看得懂一支函式在什麼條件下會回傳不同結果，或是這支檔案在什麼情況下才會真的執行。
+  </div>
+
+  <h2>1. 先看兩個「真的」屬於你專案的 if</h2>
+  <p>第一個，來自 Lesson 2 那個 <code>output_stem()</code> 函式，上次刻意跳過的那一行：</p>
+  <p class="source-file">scripts/run_fitbit_report_neurokit.py</p>
+  <pre><code>source = Path(source_name).stem if source_name else input_path.stem</code></pre>
+
+  <p>第二個，在檔案的最後面：</p>
+  <pre><code>if __name__ == "__main__":
+    main()</code></pre>
+
+  <h2>2. 逐字拆解：三元運算式</h2>
+  <p>第一種 if 長得跟你以前看過的「if 區塊」不太一樣，它是寫在一行裡的「三元運算式」（ternary expression）：</p>
+  <table>
+    <tr><th>片段</th><th>這是什麼</th><th>白話解釋</th></tr>
+    <tr>
+      <td><code>A if 條件 else B</code></td>
+      <td>三元運算式的公式</td>
+      <td>唸法是「如果條件成立，取 A；不然，取 B」。整句話算出來是<strong>一個值</strong>，可以直接存進變數。</td>
+    </tr>
+    <tr>
+      <td><code>Path(source_name).stem</code></td>
+      <td>條件成立時的值（A）</td>
+      <td>如果 <code>source_name</code> 有值，就用它。</td>
+    </tr>
+    <tr>
+      <td><code>source_name</code></td>
+      <td>條件本身</td>
+      <td>Python 會把它當「有沒有值」來判斷：<code>None</code> 或空字串算「沒有」（false），其他字串算「有」（true）——這叫 truthy / falsy，不用跟 <code>True</code>/<code>False</code> 完全相等才算數。</td>
+    </tr>
+    <tr>
+      <td><code>input_path.stem</code></td>
+      <td>條件不成立時的值（B）</td>
+      <td>如果 <code>source_name</code> 是 <code>None</code>（沒給），就退回用 <code>input_path.stem</code>。</td>
+    </tr>
+  </table>
+
+  <h2>3. 逐字拆解：<code>if __name__ == "__main__":</code></h2>
+  <p>這是幾乎每支 Python script 最後都會出現的固定寫法。<code>__name__</code> 是 Python 自動幫每個檔案設定的一個變數：</p>
+  <table>
+    <tr><th>情境</th><th><code>__name__</code> 的值</th></tr>
+    <tr><td>直接執行這支檔案（例如 <code>python3 run_fitbit_report_neurokit.py</code>）</td><td><code>"__main__"</code></td></tr>
+    <tr><td>這支檔案被「別的檔案」import 進去用</td><td>這支檔案自己的檔名</td></tr>
+  </table>
+  <p>所以 <code>if __name__ == "__main__": main()</code> 的白話翻譯是：「只有在這支檔案被直接執行的時候，才呼叫 <code>main()</code>；如果只是被別的程式借用（import），就不要自動跑。」</p>
+
+  <h2>4. 用更簡單的例子鞏固</h2>
+  <pre><code>age = 15
+
+if age >= 18:
+    print("adult")
+else:
+    print("minor")
+
+label = "adult" if age >= 18 else "minor"
+print(label)</code></pre>
+  <p>上面兩段做的是同一件事：傳統 <code>if/else</code> 區塊用來「執行不同的敘述」；三元運算式用來「算出不同的值」。</p>
+
+  <div class="try-it">
+    <strong>動手做：</strong> <code>cd ~/Documents/ecgtizer-neurokit2 && source ecg_env/bin/activate && python3</code>，貼上上面 <code>age = 15</code> 那一段，觀察兩種寫法印出來的結果一不一樣。接著把 <code>age</code> 改成 <code>20</code> 重跑一次。
+  </div>
+
+  <h2>5. 小測驗</h2>
+
+  <div class="quiz">
+    <p class="q">Q1. <code>source = Path(source_name).stem if source_name else input_path.stem</code>，如果 <code>source_name</code> 是 <code>None</code>，<code>source</code> 會怎樣？</p>
+    <div class="options">
+      <button class="opt" data-correct="true">取右邊那個值</button>
+      <button class="opt" data-correct="false">取左邊那個值</button>
+      <button class="opt" data-correct="false">直接跳出錯誤</button>
+      <button class="opt" data-correct="false">一定回傳空值</button>
+    </div>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">Q2. <code>if __name__ == "__main__": main()</code> 這段的用意是？</p>
+    <div class="options">
+      <button class="opt" data-correct="true">直接執行這支檔案才跑</button>
+      <button class="opt" data-correct="false">被其他檔案匯入才跑</button>
+      <button class="opt" data-correct="false">程式一有錯誤就跑</button>
+      <button class="opt" data-correct="false">每次存檔的時候跑</button>
+    </div>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>參考來源</h2>
+  <ul>
+    <li><a href="https://docs.python.org/3/tutorial/controlflow.html#if-statements" target="_blank" rel="noopener">Python 官方教學 — if Statements</a></li>
+  </ul>
+
+  <div class="ask-teacher"><strong>卡住了嗎？</strong>這一課裡任何一句話、任何一行程式碼看不懂，都直接回來跟老師問——不管問題聽起來多基礎都可以問。</div>
+
+  <div class="nav-footer">
+    <a href="0002-function-calls.html">← Lesson 2：函式</a>
+    <a href="../index.html">回課程首頁</a>
+    <p>下一課預告：for 迴圈——看懂 <code>extract_blue_trace()</code> 怎麼一段一段處理 ECG 訊號。</p>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  document.querySelectorAll('.quiz').forEach(function (quiz) {
+    var buttons = quiz.querySelectorAll('button.opt');
+    var feedback = quiz.querySelector('.feedback');
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (quiz.dataset.answered === 'true') return;
+        quiz.dataset.answered = 'true';
+        var isCorrect = btn.getAttribute('data-correct') === 'true';
+        buttons.forEach(function (b) {
+          b.disabled = true;
+          if (b.getAttribute('data-correct') === 'true') b.classList.add('correct');
+        });
+        if (!isCorrect) btn.classList.add('wrong');
+        feedback.textContent = isCorrect ? '答對了 — 說得很清楚。' : '不對，正確答案已經標成綠色了，看看差在哪裡。';
+        feedback.className = 'feedback ' + (isCorrect ? 'good' : 'bad');
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
