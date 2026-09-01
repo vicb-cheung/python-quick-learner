@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第二課・函式（Function）</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+  <p class="eyebrow">Lesson 0002 · Python for ecgtizer-neurokit2</p>
+  <h1>函式（Function）：把一段邏輯包成一個可以重複呼叫的工具</h1>
+  <p class="subtitle">上一課看懂了「變數」這個箱子。這一課看懂「函式」——一個把好幾行邏輯包起來、取個名字、之後隨時可以呼叫的箱子。</p>
+
+  <div class="callout">
+    <span class="label">跟你的目標有什麼關係</span>
+    這個 repo 裡幾乎每支 script 都是「一堆函式 + 一個 main() 把它們串起來」。看懂函式怎麼定義、怎麼呼叫，你才看得懂程式碼是「誰在什麼時候用了誰」，而不是一堆散落的敘述。
+  </div>
+
+  <h2>1. 先看一個「真的」屬於你專案的函式</h2>
+  <p>來自 <code>scripts/run_fitbit_report_neurokit.py</code>——上一課那行 <code>timestamp = ...</code> 其實是這個函式裡的一部分：</p>
+  <p class="source-file">scripts/run_fitbit_report_neurokit.py</p>
+  <pre><code>def output_stem(input_path: Path, source_name: str | None = None) -> str:
+    source = Path(source_name).stem if source_name else input_path.stem
+    timestamp = datetime.now().strftime("%d%m%Y_%H%M%S")
+    return f"{source}_RR_{timestamp}"</code></pre>
+
+  <p>這個檔案後面的 <code>main()</code> 裡，有另一行程式碼會「呼叫」這個函式：</p>
+  <pre><code>stem = output_stem(image_path, args.source_name)</code></pre>
+
+  <p class="line-note">第 2 行那個 <code>if source_name else</code> 是條件判斷（if/else），下一課會教，這一課先跳過、不用管它在幹嘛。</p>
+
+  <h2>2. 逐字拆解</h2>
+  <table>
+    <tr><th>片段</th><th>這是什麼</th><th>白話解釋</th></tr>
+    <tr>
+      <td><code>def</code></td>
+      <td>定義函式的關鍵字<br>(define)</td>
+      <td>告訴 Python：「接下來我要教你一個新招式，先把它記起來，還沒要執行。」</td>
+    </tr>
+    <tr>
+      <td><code>output_stem</code></td>
+      <td>函式名稱</td>
+      <td>你自己取的名字，之後要用這個招式就喊它的名字。取名習慣跟變數一樣：看名字要猜得出用途。</td>
+    </tr>
+    <tr>
+      <td><code>(input_path, source_name=None)</code></td>
+      <td>參數<br>(parameters)</td>
+      <td>這個函式需要的「材料」。<code>input_path</code> 一定要給；<code>source_name</code> 可以不給，不給的話預設是 <code>None</code>（代表「沒有」）。</td>
+    </tr>
+    <tr>
+      <td><code>-&gt; str</code></td>
+      <td>回傳型別提示<br>(return type hint)</td>
+      <td>「這個函式做完會交回一段文字（str）。」這只是提示、方便閱讀，Python 不會強制檢查。</td>
+    </tr>
+    <tr>
+      <td><code>return f"{source}_RR_{timestamp}"</code></td>
+      <td>回傳值<br>(return)</td>
+      <td>函式做完事，把結果「交回去」給呼叫它的地方。函式跑到 <code>return</code> 就結束了。</td>
+    </tr>
+    <tr>
+      <td><code>output_stem(image_path, args.source_name)</code></td>
+      <td>呼叫函式<br>(function call)</td>
+      <td>真正執行這個招式：把 <code>image_path</code> 放進 <code>input_path</code> 這個箱子、把 <code>args.source_name</code> 放進 <code>source_name</code> 這個箱子，然後照函式裡的邏輯跑一遍，最後把 <code>return</code> 的結果存進 <code>stem</code>。</td>
+    </tr>
+  </table>
+
+  <h2>3. 用更簡單的例子鞏固</h2>
+  <pre><code>def greet(name):
+    return "Hello, " + name
+
+message = greet("Vic")
+print(message)</code></pre>
+  <p><code>def greet(name):</code>：定義一個叫 <code>greet</code> 的函式，需要一個材料 <code>name</code>。<br>
+  <code>return "Hello, " + name</code>：把 <code>"Hello, "</code> 跟 <code>name</code> 接在一起，交回去。<br>
+  <code>greet("Vic")</code>：呼叫它，把 <code>"Vic"</code> 放進 <code>name</code>，得到 <code>"Hello, Vic"</code>，存進 <code>message</code>。</p>
+
+  <div class="try-it">
+    <strong>動手做：</strong> <code>cd ~/Documents/ecgtizer-neurokit2 && source ecg_env/bin/activate && python3</code>，貼上上面那個 <code>greet</code> 函式（含 <code>def</code> 那一行到 <code>return</code>），按 Enter，再貼 <code>print(greet("Vic"))</code>。接著試著自己改一個函式：讓它接收兩個材料（例如 <code>name</code> 跟 <code>age</code>），回傳一句組合起來的話。
+  </div>
+
+  <h2>4. 小測驗</h2>
+
+  <div class="quiz">
+    <p class="q">Q1. <code>def output_stem(input_path, source_name=None) -&gt; str:</code> 這一行裡，<code>input_path</code> 跟 <code>source_name</code> 是什麼？</p>
+    <div class="options">
+      <button class="opt" data-correct="true">函式的參數</button>
+      <button class="opt" data-correct="false">函式的名稱</button>
+      <button class="opt" data-correct="false">回傳的數值</button>
+      <button class="opt" data-correct="false">檔案的路徑</button>
+    </div>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">Q2. 執行 <code>def greet(name): return "Hi " + name</code> 之後，<code>greet("Vic")</code> 這個呼叫會得到什麼？</p>
+    <div class="options">
+      <button class="opt" data-correct="true">Hi Vic</button>
+      <button class="opt" data-correct="false">greet</button>
+      <button class="opt" data-correct="false">name</button>
+      <button class="opt" data-correct="false">None</button>
+    </div>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>參考來源</h2>
+  <ul>
+    <li><a href="https://docs.python.org/3/tutorial/controlflow.html#defining-functions" target="_blank" rel="noopener">Python 官方教學 — Defining Functions</a></li>
+  </ul>
+
+  <div class="ask-teacher"><strong>卡住了嗎？</strong>這一課裡任何一句話、任何一行程式碼看不懂，都直接回來跟老師問——不管問題聽起來多基礎都可以問。</div>
+
+  <div class="nav-footer">
+    <a href="0001-variables-and-print.html">← Lesson 1：變數</a>
+    <a href="../index.html">回課程首頁</a>
+    <p>下一課預告：條件判斷 if / else——把這一課跳過的那個「三元運算式」補回來講清楚。</p>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  document.querySelectorAll('.quiz').forEach(function (quiz) {
+    var buttons = quiz.querySelectorAll('button.opt');
+    var feedback = quiz.querySelector('.feedback');
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (quiz.dataset.answered === 'true') return;
+        quiz.dataset.answered = 'true';
+        var isCorrect = btn.getAttribute('data-correct') === 'true';
+        buttons.forEach(function (b) {
+          b.disabled = true;
+          if (b.getAttribute('data-correct') === 'true') b.classList.add('correct');
+        });
+        if (!isCorrect) btn.classList.add('wrong');
+        feedback.textContent = isCorrect ? '答對了 — 說得很清楚。' : '不對，正確答案已經標成綠色了，看看差在哪裡。';
+        feedback.className = 'feedback ' + (isCorrect ? 'good' : 'bad');
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
