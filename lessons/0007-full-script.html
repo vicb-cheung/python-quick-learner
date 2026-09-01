@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第七課・整合讀完一支 script</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+  <p class="eyebrow">Lesson 0007 · Python for ecgtizer-neurokit2 · 壓軸課</p>
+  <h1>整合：從頭到尾讀懂一支 script</h1>
+  <p class="subtitle">前六課學的變數、函式、if/else、for、import、list/dict，這一課全部用上——目標是完整讀懂 <code>run_fitbit_report_neurokit.py</code> 的 <code>main()</code> 從頭到尾在幹嘛。這就是 Mission 裡設定的最終目標。</p>
+
+  <div class="callout">
+    <span class="label">跟你的目標有什麼關係</span>
+    這就是那個「給你這個 repo 裡任何一個函式，你能逐行說出它在幹嘛」的實戰演練。讀完這一課，你等於證明了前六課真的學進去了。
+  </div>
+
+  <h2>整支 main() 逐段拆解</h2>
+  <p class="source-file">scripts/run_fitbit_report_neurokit.py — main()</p>
+
+  <pre><code>def main() -> None:
+    parser = argparse.ArgumentParser(description="...")
+    parser.add_argument("--image", required=True, type=Path)
+    parser.add_argument("--output-dir", default=PROJECT_DIR / "outputs", type=Path)
+    parser.add_argument("--sampling-rate", default=250, type=int)
+    args = parser.parse_args()</code></pre>
+  <p><strong>第一段：讀取命令列參數。</strong> 這是<strong>函式呼叫</strong>（Lesson 2）——<code>ArgumentParser()</code> 是別人寫好的工具（從 <strong>import</strong>，Lesson 5 教的 <code>argparse</code>），負責讀懂你在 Terminal 打的 <code>--image xxx.pdf</code> 這種參數。跑完這幾行，<code>args.image</code>、<code>args.output_dir</code>、<code>args.sampling_rate</code> 就是你在 Terminal 打的那些值——本質上就是一堆<strong>變數</strong>（Lesson 1）。</p>
+
+  <pre><code>    image = np.array(Image.open(image_path).convert("RGB"))
+    raw = extract_blue_trace(image, DEFAULT_STRIPS, args.sampling_rate)
+    clean = nk.ecg_clean(raw, sampling_rate=args.sampling_rate)
+    processed, info = nk.ecg_process(clean, sampling_rate=args.sampling_rate)</code></pre>
+  <p><strong>第二段：把圖片變成訊號、清乾淨、分析。</strong> 這四行是一條「資料流」：圖片 → <code>extract_blue_trace()</code>（Lesson 4 的 for 迴圈，把圖片切段抽出訊號）→ <code>nk.ecg_clean()</code>（NeuroKit2 這個<strong>套件</strong>，Lesson 5 的 <code>import neurokit2 as nk</code>，負責濾掉雜訊）→ <code>nk.ecg_process()</code>（NeuroKit2 負責找出心跳、R-peak 等醫學特徵）。每一行都是<strong>變數 = 函式呼叫</strong>，前一行的結果變成下一行的材料。</p>
+
+  <pre><code>    stem = output_stem(image_path, args.source_name)
+    csv_path = output_dir / f"{stem}_fitbit_neurokit.csv"
+    plot_path = output_dir / f"{stem}_fitbit_neurokit.png"</code></pre>
+  <p><strong>第三段：準備輸出檔名。</strong> 這就是 Lesson 1、Lesson 2、Lesson 3 一路拆解的 <code>output_stem()</code>——現在你知道它整支函式在幹嘛、<code>if/else</code> 那行在防什麼情況，也知道它是被這裡呼叫的。</p>
+
+  <pre><code>    out = pd.DataFrame({
+        "ECG_Raw": raw,
+        "ECG_Clean": processed["ECG_Clean"],
+        "ECG_Rate": processed["ECG_Rate"],
+        "ECG_R_Peaks": processed["ECG_R_Peaks"],
+    })
+    out.to_csv(csv_path, index=False)</code></pre>
+  <p><strong>第四段：把結果存成表格。</strong> <code>{...}</code> 是 <strong>dict</strong>（Lesson 6）——每個 key（像 <code>"ECG_Raw"</code>）對應一欄資料。<code>pd.DataFrame(...)</code> 把這個 dict 變成一張表格（<code>pd</code> 就是 Lesson 5 教的 <code>import pandas as pd</code>），存成 CSV 檔。</p>
+
+  <pre><code>    summary = {
+        "image": str(image_path),
+        "samples": int(len(raw)),
+        "mean_hr_bpm": float(np.nanmean(rate)),
+        ...
+    }
+    summary_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")</code></pre>
+  <p><strong>第五段：把摘要存成 JSON。</strong> 又是一個 <strong>dict</strong>（Lesson 6），這次用 <code>json.dumps(...)</code>（<code>import json</code>）把它轉成 JSON 格式的文字，寫進檔案。</p>
+
+  <pre><code>if __name__ == "__main__":
+    main()</code></pre>
+  <p><strong>最後一段：真正啟動整支程式。</strong> 這是 Lesson 3 教的那句固定寫法——只有直接執行這支檔案時，才會呼叫 <code>main()</code> 把上面全部串起來跑一遍。</p>
+
+  <h2>整體資料流（用你自己的話再講一次）</h2>
+  <div class="callout">
+    <span class="label">試著自己說說看</span>
+    讀圖片 → 切段抽出訊號（for）→ 清乾淨、找特徵（借來的 NeuroKit2 工具）→ 準備檔名（呼叫 output_stem，裡面有個 if/else）→ 把結果打包成表格跟摘要（list/dict）→ 存檔。如果你能對著這張圖，不看程式碼、用自己的話講一次，這一課的目標就達成了。
+  </div>
+
+  <div class="try-it">
+    <strong>動手做（選做，比較進階）：</strong> 找一個 Fitbit ECG 報告的 PDF（或先跳過這步，只用眼睛讀程式碼也可以），跑跑看：<code>cd ~/Documents/ecgtizer-neurokit2 && source ecg_env/bin/activate && python3 scripts/run_fitbit_report_neurokit.py --image 你的圖片路徑</code>，觀察 Terminal 印出的 JSON 摘要，對照上面每一段講的東西。
+  </div>
+
+  <h2>參考來源</h2>
+  <ul>
+    <li><a href="https://docs.python.org/3/tutorial/index.html" target="_blank" rel="noopener">Python 官方教學 — The Python Tutorial（總覽，之後想深入任何一個主題都可以回來查）</a></li>
+  </ul>
+
+  <div class="callout">
+    <span class="label">完成</span>
+    七課上完了！Mission 裡設定的「讀懂 <code>run_fitbit_report_neurokit.py</code> 從頭到尾」這個最終目標，現在你有了完整的拆解可以對照。回到跟 Claude 的對話討論下一步想學什麼——繼續深入這個專案的其他 script（像 <code>candidate_engine.py</code>、<code>apex_hybrid.py</code>，也是 <code>learning/</code> 那個 sigmoid 主題在教的檔案），或是開始自己動手改一點小東西，都可以。
+  </div>
+
+  <div class="ask-teacher"><strong>卡住了嗎？</strong>任何一句話、任何一行程式碼看不懂，都直接回來跟老師問——不管問題聽起來多基礎都可以問。</div>
+
+  <div class="nav-footer">
+    <a href="0006-lists-and-dicts.html">← Lesson 6：list / dict</a>
+    <a href="../index.html">回課程首頁</a>
+  </div>
+
+</div>
+</body>
+</html>

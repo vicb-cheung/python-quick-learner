@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第四課・for 迴圈</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+  <p class="eyebrow">Lesson 0004 · Python for ecgtizer-neurokit2</p>
+  <h1>for 迴圈：對一堆東西重複做同一件事</h1>
+  <p class="subtitle">這一課看懂 <code>extract_blue_trace()</code>——真正把 ECG 圖片切成一段一段訊號的那支函式——怎麼用 for 迴圈處理「一整批」資料。</p>
+
+  <div class="callout">
+    <span class="label">跟你的目標有什麼關係</span>
+    這個專案在處理訊號、處理一批批的檔案、一段段的裁切區域時，幾乎都靠 for 迴圈：「對這個清單裡的每一個東西，做同一組動作。」看不懂 for，就看不懂資料是怎麼被一批一批處理完的。
+  </div>
+
+  <h2>1. 先看一段「真的」屬於你專案的迴圈</h2>
+  <p class="source-file">scripts/run_fitbit_report_neurokit.py — extract_blue_trace()</p>
+  <pre><code>def extract_blue_trace(image, strips, sampling_rate):
+    segments = []
+    for x1, y1, x2, y2, duration_sec in strips:
+        crop = image[y1:y2, x1:x2]
+        # ...（訊號處理，先跳過）
+        segments.append(resample(signal, duration_sec * sampling_rate))
+    return np.concatenate(segments)</code></pre>
+  <p><code>strips</code> 就是 Lesson 1 提過的 <code>DEFAULT_STRIPS</code>——一個裝了好幾組座標的清單（list）：</p>
+  <pre><code>DEFAULT_STRIPS = [
+    (18, 141, 598, 229, 8),
+    (18, 258, 598, 344, 8),
+    (18, 371, 598, 458, 8),
+    (18, 486, 453, 571, 6),
+]</code></pre>
+
+  <h2>2. 逐字拆解</h2>
+  <table>
+    <tr><th>片段</th><th>這是什麼</th><th>白話解釋</th></tr>
+    <tr>
+      <td><code>for ... in strips:</code></td>
+      <td>for 迴圈</td>
+      <td>「把 <code>strips</code> 這個清單裡的每一個東西，輪流拿出來，每拿一個就把冒號下面的程式碼跑一次。」<code>strips</code> 裡有 4 組資料，這段程式碼就會跑 4 次。</td>
+    </tr>
+    <tr>
+      <td><code>x1, y1, x2, y2, duration_sec</code></td>
+      <td>拆解一組資料<br>(tuple unpacking)</td>
+      <td><code>strips</code> 裡每一個元素是像 <code>(18, 141, 598, 229, 8)</code> 這樣的一組 5 個數字，這一行把它們一次拆成 5 個變數，對應順序：<code>x1=18, y1=141, x2=598, y2=229, duration_sec=8</code>。</td>
+    </tr>
+    <tr>
+      <td><code>segments = []</code> ... <code>segments.append(...)</code></td>
+      <td>累積結果的清單</td>
+      <td>迴圈開始前先準備一個空清單；每跑一次迴圈，就把這次算出來的結果「加進去」清單尾巴。跑完 4 次，<code>segments</code> 裡就有 4 筆結果。</td>
+    </tr>
+  </table>
+
+  <h2>3. 用更簡單的例子鞏固</h2>
+  <pre><code>fruits = ["apple", "banana", "cherry"]
+
+for fruit in fruits:
+    print(fruit)</code></pre>
+  <p>這會依序印出 <code>apple</code>、<code>banana</code>、<code>cherry</code>——<code>fruit</code> 這個變數每一輪都換成清單裡下一個東西。</p>
+  <pre><code>lengths = []
+for fruit in fruits:
+    lengths.append(len(fruit))
+
+print(lengths)</code></pre>
+  <p>這段做的事情跟 <code>extract_blue_trace()</code> 裡一模一樣的模式：準備空清單 → 迴圈裡累積結果。<code>len(fruit)</code> 是內建函式，算字串長度。跑完 <code>lengths</code> 會是 <code>[5, 6, 6]</code>。</p>
+
+  <div class="try-it">
+    <strong>動手做：</strong> <code>cd ~/Documents/ecgtizer-neurokit2 && source ecg_env/bin/activate && python3</code>，貼上 <code>fruits</code> 那兩段，觀察印出來的結果。接著自己加一個水果到清單裡，重跑一次，看 <code>lengths</code> 有沒有多一個數字。
+  </div>
+
+  <h2>4. 小測驗</h2>
+
+  <div class="quiz">
+    <p class="q">Q1. <code>DEFAULT_STRIPS</code> 有 4 組資料，<code>for x1, y1, x2, y2, duration_sec in strips:</code> 這段迴圈會跑幾次？</p>
+    <div class="options">
+      <button class="opt" data-correct="true">4 次</button>
+      <button class="opt" data-correct="false">1 次</button>
+      <button class="opt" data-correct="false">5 次</button>
+      <button class="opt" data-correct="false">0 次</button>
+    </div>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">Q2. <code>segments = []</code> 接著在迴圈裡 <code>segments.append(x)</code>，這個模式在做什麼？</p>
+    <div class="options">
+      <button class="opt" data-correct="true">把結果一個個加進清單</button>
+      <button class="opt" data-correct="false">把清單整個清空重來</button>
+      <button class="opt" data-correct="false">把迴圈提前結束跳出</button>
+      <button class="opt" data-correct="false">把數字轉換成文字串</button>
+    </div>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>參考來源</h2>
+  <ul>
+    <li><a href="https://docs.python.org/3/tutorial/controlflow.html#for-statements" target="_blank" rel="noopener">Python 官方教學 — for Statements</a></li>
+  </ul>
+
+  <div class="ask-teacher"><strong>卡住了嗎？</strong>這一課裡任何一句話、任何一行程式碼看不懂，都直接回來跟老師問——不管問題聽起來多基礎都可以問。</div>
+
+  <div class="nav-footer">
+    <a href="0003-if-else.html">← Lesson 3：if / else</a>
+    <a href="../index.html">回課程首頁</a>
+    <a href="0005-imports.html">Lesson 5：import →</a>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  document.querySelectorAll('.quiz').forEach(function (quiz) {
+    var buttons = quiz.querySelectorAll('button.opt');
+    var feedback = quiz.querySelector('.feedback');
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (quiz.dataset.answered === 'true') return;
+        quiz.dataset.answered = 'true';
+        var isCorrect = btn.getAttribute('data-correct') === 'true';
+        buttons.forEach(function (b) {
+          b.disabled = true;
+          if (b.getAttribute('data-correct') === 'true') b.classList.add('correct');
+        });
+        if (!isCorrect) btn.classList.add('wrong');
+        feedback.textContent = isCorrect ? '答對了 — 說得很清楚。' : '不對，正確答案已經標成綠色了，看看差在哪裡。';
+        feedback.className = 'feedback ' + (isCorrect ? 'good' : 'bad');
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第六課・清單與字典</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+  <p class="eyebrow">Lesson 0006 · Python for ecgtizer-neurokit2</p>
+  <h1>清單與字典（list / dict）：兩種裝很多東西的箱子</h1>
+  <p class="subtitle">變數是裝「一個」東西的箱子。這一課看兩種裝「很多」東西的箱子——list 跟 dict——這個專案幾乎每支檔案都同時用到兩種。</p>
+
+  <div class="callout">
+    <span class="label">跟你的目標有什麼關係</span>
+    Lesson 4 的 <code>strips</code>、還有到處看到的 <code>[...]</code> 都是 list；程式碼裡任何用「名字」取值（像 <code>summary["samples"]</code>）的都是 dict。分清楚這兩種，你才知道該用數字位置還是用名字去拿資料。
+  </div>
+
+  <h2>1. 先看「真的」屬於你專案的兩種箱子</h2>
+  <p class="source-file">scripts/run_fitbit_report_neurokit.py</p>
+  <p>List——方括號 <code>[ ]</code>，東西按順序排好，用「第幾個」取值：</p>
+  <pre><code>DEFAULT_STRIPS = [
+    (18, 141, 598, 229, 8),
+    (18, 258, 598, 344, 8),
+    (18, 371, 598, 458, 8),
+    (18, 486, 453, 571, 6),
+]</code></pre>
+  <p>Dict——大括號 <code>{ }</code>，每筆資料有自己的「名字」（key），用名字取值：</p>
+  <pre><code>summary = {
+    "image": str(image_path),
+    "samples": int(len(raw)),
+    "mean_hr_bpm": float(np.nanmean(rate)),
+}</code></pre>
+
+  <h2>2. 逐字拆解</h2>
+  <table>
+    <tr><th>片段</th><th>這是什麼</th><th>白話解釋</th></tr>
+    <tr>
+      <td><code>DEFAULT_STRIPS[0]</code></td>
+      <td>用位置取 list 的值</td>
+      <td>拿到第一筆，也就是 <code>(18, 141, 598, 229, 8)</code>。Python 從 <code>0</code> 開始數，所以「第一個」是 <code>[0]</code> 不是 <code>[1]</code>。</td>
+    </tr>
+    <tr>
+      <td><code>for x1, y1, ... in strips:</code></td>
+      <td>Lesson 4 教過的 for 迴圈</td>
+      <td>其實就是「依序把 <code>DEFAULT_STRIPS[0]</code>、<code>[1]</code>、<code>[2]</code>、<code>[3]</code> 拿出來」的簡寫，不用自己手動一個個取。</td>
+    </tr>
+    <tr>
+      <td><code>summary["samples"]</code></td>
+      <td>用名字（key）取 dict 的值</td>
+      <td>拿到 key 叫 <code>"samples"</code> 那一筆資料。順序不重要，重要的是名字要對。</td>
+    </tr>
+    <tr>
+      <td><code>"mean_hr_bpm": float(...)</code></td>
+      <td>dict 的一筆 key-value</td>
+      <td>冒號左邊是 key（名字，通常是字串），右邊是 value（值，可以是任何東西：數字、文字、甚至另一個 list 或 dict）。</td>
+    </tr>
+  </table>
+
+  <h2>3. 用更簡單的例子鞏固</h2>
+  <pre><code>colors = ["red", "green", "blue"]
+print(colors[0])
+print(colors[2])
+
+person = {"name": "Vic", "age": 30}
+print(person["name"])
+print(person["age"])</code></pre>
+  <p><code>colors[0]</code> 印出 <code>red</code>（第一個）；<code>person["name"]</code> 印出 <code>Vic</code>（key 是 <code>"name"</code> 的那筆）。</p>
+
+  <div class="try-it">
+    <strong>動手做：</strong> <code>cd ~/Documents/ecgtizer-neurokit2 && source ecg_env/bin/activate && python3</code>，貼上 <code>colors</code> 跟 <code>person</code> 那兩段。接著自己在 <code>person</code> 裡加一筆 <code>"city": "Hong Kong"</code>（提示：<code>person["city"] = "Hong Kong"</code>），再 <code>print(person)</code> 看看整個 dict 長什麼樣子。
+  </div>
+
+  <h2>4. 小測驗</h2>
+
+  <div class="quiz">
+    <p class="q">Q1. <code>colors = ["red", "green", "blue"]</code>，<code>colors[1]</code> 會是？</p>
+    <div class="options">
+      <button class="opt" data-correct="true">green</button>
+      <button class="opt" data-correct="false">red</button>
+      <button class="opt" data-correct="false">blue</button>
+      <button class="opt" data-correct="false">1</button>
+    </div>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz">
+    <p class="q">Q2. <code>summary["samples"]</code> 這種取值方式，跟 list 的 <code>strips[0]</code> 最大的差別是？</p>
+    <div class="options">
+      <button class="opt" data-correct="true">用名字而不是位置</button>
+      <button class="opt" data-correct="false">兩者完全一樣</button>
+      <button class="opt" data-correct="false">只能存一筆資料</button>
+      <button class="opt" data-correct="false">不能存文字資料</button>
+    </div>
+    <p class="feedback"></p>
+  </div>
+
+  <h2>參考來源</h2>
+  <ul>
+    <li><a href="https://docs.python.org/3/tutorial/datastructures.html" target="_blank" rel="noopener">Python 官方教學 — Data Structures</a></li>
+  </ul>
+
+  <div class="ask-teacher"><strong>卡住了嗎？</strong>這一課裡任何一句話、任何一行程式碼看不懂，都直接回來跟老師問——不管問題聽起來多基礎都可以問。</div>
+
+  <div class="nav-footer">
+    <a href="0005-imports.html">← Lesson 5：import</a>
+    <a href="../index.html">回課程首頁</a>
+    <a href="0007-full-script.html">Lesson 7：整合 →</a>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  document.querySelectorAll('.quiz').forEach(function (quiz) {
+    var buttons = quiz.querySelectorAll('button.opt');
+    var feedback = quiz.querySelector('.feedback');
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (quiz.dataset.answered === 'true') return;
+        quiz.dataset.answered = 'true';
+        var isCorrect = btn.getAttribute('data-correct') === 'true';
+        buttons.forEach(function (b) {
+          b.disabled = true;
+          if (b.getAttribute('data-correct') === 'true') b.classList.add('correct');
+        });
+        if (!isCorrect) btn.classList.add('wrong');
+        feedback.textContent = isCorrect ? '答對了 — 說得很清楚。' : '不對，正確答案已經標成綠色了，看看差在哪裡。';
+        feedback.className = 'feedback ' + (isCorrect ? 'good' : 'bad');
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
