@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python 語法快速參考</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+  <p class="eyebrow">Reference · Python for ecgtizer-neurokit2</p>
+  <h1>Python 語法快速參考</h1>
+  <p class="subtitle">每上完一課就會回來補一條。列印出來放旁邊查也可以。</p>
+
+  <h2>變數（Variable）</h2>
+  <table>
+    <tr><th>寫法</th><th>意思</th><th>來自這個 repo 的例子</th></tr>
+    <tr>
+      <td><code>名稱 = 值</code></td>
+      <td>把右邊算出來的值，存進左邊這個名稱（箱子）。<code>=</code> 不是數學等於，是「賦值」。</td>
+      <td><code>timestamp = datetime.now().strftime(...)</code><br><span class="line-note">run_fitbit_report_neurokit.py</span></td>
+    </tr>
+    <tr>
+      <td><code>x = 5</code></td>
+      <td>建立一個裝「數字」的變數。</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><code>x = "hello"</code></td>
+      <td>建立一個裝「文字（字串）」的變數。文字要用引號包起來。</td>
+      <td>—</td>
+    </tr>
+  </table>
+
+  <h2>印出來看（print）</h2>
+  <table>
+    <tr><th>寫法</th><th>意思</th></tr>
+    <tr>
+      <td><code>print(x)</code></td>
+      <td>把變數 <code>x</code> 目前裝的東西顯示在畫面上。除錯、確認「這個箱子裡到底是什麼」最常用的工具。</td>
+    </tr>
+  </table>
+
+  <h2>常見混淆</h2>
+  <ul>
+    <li><code>=</code>（賦值）跟數學課的「等於」不是同一件事，方向永遠是「右邊 → 左邊」。</li>
+    <li>變數名稱是你自己取的，跟變數裡裝的內容無關——但取一個有意義的名字（像 <code>timestamp</code>）能讓程式碼更容易讀懂，這也是為什麼這個 repo 裡的變數名稱大多看字面就猜得出用途。</li>
+  </ul>
+
+  <div class="nav-footer">
+    <a href="../lessons/0001-variables-and-print.html">← 回到 Lesson 0001</a>
+  </div>
+
+</div>
+</body>
+</html>

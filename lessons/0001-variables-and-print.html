@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>第一課・變數（Variable）</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="page">
+
+  <p class="eyebrow">Lesson 0001 · Python for ecgtizer-neurokit2</p>
+  <h1>變數（Variable）：從你自己專案的一行程式碼開始</h1>
+  <p class="subtitle">今天的目標很小：看懂 <code>scripts/run_fitbit_report_neurokit.py</code> 裡的一行程式碼，並自己動手寫出同樣邏輯的一行。</p>
+
+  <div class="callout">
+    <span class="label">跟你的目標有什麼關係</span>
+    這個 repo 裡幾乎每一行程式碼都在做同一件事：把某個東西「存起來」，之後再拿出來用。這個「存起來的箱子」就叫做<strong>變數（variable）</strong>。看懂變數，是看懂整個 repo 的第一步——你之後想讀懂 <code>candidate_engine.py</code> 或 <code>apex_hybrid.py</code> 裡的 scoring 邏輯，靠的也是同一個技能，只是箱子變多、變複雜。
+  </div>
+
+  <h2>1. 先看一行「真的」屬於你專案的程式碼</h2>
+  <p>這一行來自 <code>scripts/run_fitbit_report_neurokit.py</code> 裡的 <code>output_stem()</code> 函式，作用是幫每次分析結果的檔名加上時間戳記：</p>
+  <p class="source-file">scripts/run_fitbit_report_neurokit.py</p>
+  <pre><code>timestamp = datetime.now().strftime("%d%m%Y_%H%M%S")</code></pre>
+
+  <p>先別管右邊那串 <code>datetime.now()...</code> 在做什麼——今天只要看懂這一行的「形狀」。</p>
+
+  <h2>2. 逐字拆解</h2>
+  <table>
+    <tr><th>片段</th><th>這是什麼</th><th>白話解釋</th></tr>
+    <tr>
+      <td><code>timestamp</code></td>
+      <td>變數名稱<br>(variable name)</td>
+      <td>你自己取的一個「箱子」的名字，用來裝東西。名字可以自己取，取得有意義（像 <code>timestamp</code> 一看就知道裝的是時間），是好習慣。</td>
+    </tr>
+    <tr>
+      <td><code>=</code></td>
+      <td>賦值<br>(assignment)</td>
+      <td><strong>這不是數學課的「等於」！</strong>它的意思是「把右邊算出來的東西，放進左邊這個箱子」。方向是右 → 左。</td>
+    </tr>
+    <tr>
+      <td><code>datetime.now().strftime(...)</code></td>
+      <td>一個函式呼叫的結果<br>(function call)</td>
+      <td>今天不用懂它怎麼運作，只要知道：它執行完會算出一段「文字」，長得像 <code>"01092026_143022"</code>。</td>
+    </tr>
+  </table>
+
+  <p>整句話翻成白話：「把 <code>datetime.now().strftime(...)</code> 算出來的那段文字，放進一個叫 <code>timestamp</code> 的箱子裡，之後要用的時候，寫 <code>timestamp</code> 就能拿回它。」</p>
+
+  <h2>3. 用更簡單的例子鞏固</h2>
+  <p>同樣的形狀，換成最簡單的版本：</p>
+  <pre><code>x = 5
+print(x)</code></pre>
+  <p><code>x = 5</code>：建立一個叫 <code>x</code> 的箱子，裡面放數字 <code>5</code>。<br>
+  <code>print(x)</code>：<code>print(...)</code> 是 Python 內建的「印出來給我看」的函式——把 <code>x</code> 箱子裡目前裝的東西顯示在畫面上。執行這兩行，畫面上會出現：</p>
+  <pre><code>5</code></pre>
+
+  <p>字串（一段文字）也一樣可以放進箱子：</p>
+  <pre><code>greeting = "hello"
+print(greeting)</code></pre>
+  <p class="line-note">文字要用引號（<code>"</code> 或 <code>'</code>）包起來，Python 才知道這是「文字」而不是一個變數名稱。</p>
+
+  <div class="try-it">
+    <strong>動手做（建議實際打開電腦操作）：</strong>
+    <ol>
+      <li>打開 Terminal，切換到專案資料夾並啟動這個專案自帶的 Python 環境：<br><code>cd ~/Documents/ecgtizer-neurokit2 && source ecg_env/bin/activate</code></li>
+      <li>輸入 <code>python3</code> 進入 Python 互動模式（會看到 <code>&gt;&gt;&gt;</code> 提示字元）</li>
+      <li>逐行貼上上面兩組例子（<code>x = 5</code> / <code>print(x)</code>，以及 <code>greeting = "hello"</code> / <code>print(greeting)</code>），每貼一行按 Enter，觀察畫面顯示什麼</li>
+      <li>試著自己取一個新的變數名稱、放一個不同的數字或文字進去，再用 <code>print()</code> 印出來看看</li>
+      <li>結束時輸入 <code>exit()</code> 離開</li>
+    </ol>
+    <p>看到你自己打的東西被印出來，就是這一課真正「懂了」的證據——比只看文章有效得多。</p>
+  </div>
+
+  <h2>4. 小測驗</h2>
+
+  <div class="quiz" id="quiz1">
+    <p class="q">Q1. 在 <code>timestamp = datetime.now().strftime(...)</code> 這一行裡，<code>=</code> 符號的意思是？</p>
+    <div class="options">
+      <button class="opt" data-correct="true">把值存進變數</button>
+      <button class="opt" data-correct="false">判斷兩邊相等</button>
+      <button class="opt" data-correct="false">印出這個數值</button>
+      <button class="opt" data-correct="false">刪除這個變數</button>
+    </div>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" id="quiz2">
+    <p class="q">Q2. 執行完 <code>greeting = "hello"</code> 之後接著執行 <code>print(greeting)</code>，畫面上會看到什麼？</p>
+    <div class="options">
+      <button class="opt" data-correct="true">hello</button>
+      <button class="opt" data-correct="false">greet</button>
+      <button class="opt" data-correct="false">print</button>
+      <button class="opt" data-correct="false">value</button>
+    </div>
+    <p class="feedback"></p>
+  </div>
+
+  <p class="line-note">（這個小測驗不會儲存紀錄——下次上課時直接跟我口頭講你答對了哪些、卡在哪裡即可，我會記進學習紀錄。）</p>
+
+  <h2>參考來源</h2>
+  <p>今天的內容對應官方教學的這幾段，有空可以順手讀一下原文：</p>
+  <ul>
+    <li><a href="https://docs.python.org/3/tutorial/introduction.html" target="_blank" rel="noopener">Python 官方教學 — An Informal Introduction to Python</a>（數字、字串、變數賦值的官方說明）</li>
+    <li><a href="https://realpython.com/python-variables/" target="_blank" rel="noopener">Real Python — Variables in Python: Usage and Best Practices</a>（變數概念的補充講解，範例豐富）</li>
+  </ul>
+
+  <div class="ask-teacher">
+    <strong>卡住了嗎？</strong> 這一課裡任何一句話、任何一行程式碼看不懂，都直接回來問我（你的老師）——不管問題聽起來多基礎都可以問，這就是我在這裡的原因。
+  </div>
+
+  <div class="nav-footer">
+    <a href="../reference/python-syntax-cheatsheet.html">📄 快速參考：變數 &amp; print()</a>
+    <a href="../MISSION.md">🎯 這個學習計畫的 Mission</a>
+    <p>下一課預告：函式呼叫（function call）——把 <code>datetime.now().strftime(...)</code> 這種「函式接函式」的寫法拆開來看懂。</p>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  document.querySelectorAll('.quiz').forEach(function (quiz) {
+    var buttons = quiz.querySelectorAll('button.opt');
+    var feedback = quiz.querySelector('.feedback');
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (quiz.dataset.answered === 'true') return;
+        quiz.dataset.answered = 'true';
+        var isCorrect = btn.getAttribute('data-correct') === 'true';
+        buttons.forEach(function (b) {
+          b.disabled = true;
+          if (b.getAttribute('data-correct') === 'true') b.classList.add('correct');
+        });
+        if (!isCorrect) btn.classList.add('wrong');
+        feedback.textContent = isCorrect ? '答對了 — 說得很清楚。' : '不對，正確答案已經標成綠色了，看看差在哪裡。';
+        feedback.className = 'feedback ' + (isCorrect ? 'good' : 'bad');
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
