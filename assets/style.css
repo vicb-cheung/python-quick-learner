@@ -1,25 +1,69 @@
 /* Shared stylesheet for the "Python via ecgtizer-neurokit2" teaching workspace.
-   Tufte-inspired: serif reading type, generous margins, quiet color, print-friendly. */
+   Tufte-inspired: serif reading type, generous margins, quiet color, print-friendly.
+   Palette: butter-yellow paper / warm coral accent / soft mint — a light, cheerful
+   pairing chosen to feel bright without being harsh. See NOTES.md for the contrast
+   rationale (accent c85f38 is reserved for headings & large text; body-sized
+   links use the darkened accent-strong so small text stays AA-legible; the mint
+   tint is decorative only — a callout background, never text). Every text/background
+   pair below is WCAG AA-checked (4.5:1 body text, 3:1 large text & borders). */
 
 :root {
-  --ink: #1a1a1a;
-  --paper: #fdfcf9;
-  --muted: #6b6b63;
-  --rule: #ddd8cc;
-  --accent: #8a3b12;
-  --accent-soft: #f4e9dd;
-  --code-bg: #f6f4ee;
-  --code-border: #e2ddcd;
-  --good: #2f6f3e;
-  --good-bg: #eaf4ec;
-  --bad: #a3341f;
-  --bad-bg: #fbeae6;
+  --ink: #3a2f22;
+  --paper: #fbf3d9;
+  --card: #fdfaee;
+  --muted: #6f6555;
+  --rule: #988a6d;
+  --accent: #c85f38;
+  --accent-strong: #9c3a19;
+  --accent-soft: #d9f0e5;
+  --code-bg: #efe7ce;
+  --code-border: #7d6f4f;
+  --good: #2f6b4a;
+  --good-bg: #dcefdf;
+  --bad: #a84631;
+  --bad-bg: #f8e6de;
   --max-width: 640px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink: #f7ecd8;
+    --paper: #2c2418;
+    --card: #362c1e;
+    --muted: #c9b89a;
+    --rule: #8a7a5a;
+    --accent: #f2a583;
+    --accent-strong: #f6c19f;
+    --accent-soft: #1f3d30;
+    --code-bg: #3a2f1f;
+    --code-border: #8a7a5a;
+    --good: #8fd1ab;
+    --good-bg: #1e3a2a;
+    --bad: #f2a58f;
+    --bad-bg: #3a2018;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ink: #f7ecd8;
+  --paper: #2c2418;
+  --card: #362c1e;
+  --muted: #c9b89a;
+  --rule: #8a7a5a;
+  --accent: #f2a583;
+  --accent-strong: #f6c19f;
+  --accent-soft: #1f3d30;
+  --code-bg: #3a2f1f;
+  --code-border: #8a7a5a;
+  --good: #8fd1ab;
+  --good-bg: #1e3a2a;
+  --bad: #f2a58f;
+  --bad-bg: #3a2018;
 }
 
 * { box-sizing: border-box; }
 
-html { color-scheme: light; }
+html { color-scheme: light dark; }
 
 body {
   margin: 0;
@@ -52,7 +96,7 @@ h1 {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 0.72rem;
-  color: var(--accent);
+  color: var(--accent-strong);
   margin: 0 0 0.6rem;
 }
 
@@ -72,7 +116,7 @@ h3 {
 
 p { margin: 0.9rem 0; }
 
-a { color: var(--accent); text-decoration-thickness: 1px; }
+a { color: var(--accent-strong); text-decoration-thickness: 1px; }
 a:hover { text-decoration-thickness: 2px; }
 
 .subtitle {
@@ -96,7 +140,7 @@ a:hover { text-decoration-thickness: 2px; }
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--accent);
+  color: var(--accent-strong);
   display: block;
   margin-bottom: 0.3rem;
 }
@@ -145,7 +189,7 @@ li { margin: 0.4rem 0; }
   border-radius: 6px;
   padding: 1.3rem 1.3rem 1.5rem;
   margin: 1.4rem 0;
-  background: #fffefb;
+  background: var(--card);
 }
 
 .quiz .q {
@@ -207,7 +251,7 @@ li { margin: 0.4rem 0; }
 .nav-footer a { display: inline-block; margin-right: 1rem; }
 
 .ask-teacher {
-  background: #eef1f6;
+  background: var(--code-bg);
   border-radius: 6px;
   padding: 0.9rem 1.1rem;
   margin: 1.6rem 0;
