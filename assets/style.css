@@ -250,6 +250,46 @@ li { margin: 0.4rem 0; }
 
 .nav-footer a { display: inline-block; margin-right: 1rem; }
 
+.nav-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+}
+
+.nav-btn {
+  font-family: -apple-system, "PingFang TC", sans-serif;
+  display: inline-block;
+  margin-right: 0;
+  padding: 0.55rem 1.05rem;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 0.88rem;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.nav-btn:hover { border-color: var(--accent); background: var(--accent-soft); }
+
+.nav-btn-primary {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-strong);
+  font-weight: 600;
+}
+
+.nav-btn-primary:hover {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+  color: var(--card);
+}
+
+.nav-links-extra {
+  margin-top: 0;
+}
+
 .ask-teacher {
   background: var(--code-bg);
   border-radius: 6px;
@@ -267,4 +307,5 @@ td code, th code { white-space: nowrap; }
   body { font-size: 12pt; }
   .quiz, .ask-teacher, .try-it { border-color: #999; background: none; }
   a { color: var(--ink); }
+  .nav-btn { border-color: #999; background: none; color: var(--ink); }
 }
